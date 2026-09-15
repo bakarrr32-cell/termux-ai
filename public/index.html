@@ -421,25 +421,48 @@ textarea::placeholder {
   font-weight: 700;
 }
 
-/* Premium responsive table */
+/* Premium table */
 .table-wrap {
-  border: 1px solid #2d2d35;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 10px 0 14px;
   border-radius: 12px;
-  background: #111116;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.table-wrap::-webkit-scrollbar {
+  display: none;
 }
 
 .table-wrap table {
-  min-width: 0;
+  width: max-content;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 15px;
 }
 
-.table-wrap th {
-  background: #18181e;
-}
-
-.table-wrap td,
-.table-wrap th {
+.table-wrap th,
+.table-wrap td {
+  border: 0;
+  border-bottom: 1px solid #303038;
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
   line-height: 1.5;
-  word-break: break-word;
+}
+
+.table-wrap th {
+  font-weight: 700;
+  white-space: nowrap;
+  background: transparent;
+}
+
+.table-wrap td {
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 @media (max-width: 600px) {
