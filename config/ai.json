@@ -1,6 +1,6 @@
 {
   "provider": "neokens",
   "baseURL": "https://api.v2.neokens.com/v1",
-  "model": "grok-4.6",
+  "model": "gpt-5.6-luna",
   "apiKeyEnv": "NEOKENS_KEY"
 }

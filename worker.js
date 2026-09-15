@@ -1,5 +1,5 @@
 const PROVIDER_URL = "https://api.v2.neokens.com/v1/chat/completions";
-const MODEL = "grok-4.6";
+const MODEL = "gpt-5.6-luna";
 
 const SYSTEM_PROMPT = `
 Kamu adalah Termux AI, asisten AI yang membantu pengguna secara langsung.
