@@ -1,0 +1,34 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Dependencies
+node_modules/
+
+# Runtime data
+logs/
+data/
+*.log
+
+# Backups / temporary project copies
+backups/
+.upgrade-backup-*/
+*.backup
+*.backup-*
+*.before-*
+*.bak
+*.tgz
+
+# Local/editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Cloudflare local state
+.wrangler/
+
+# OS
+Thumbs.db

@@ -1,0 +1,6 @@
+{
+  "name": "test",
+  "baseURL": "https://example.com/v1",
+  "model": "test-model",
+  "apiKeyEnv": "AI_API_KEY"
+}

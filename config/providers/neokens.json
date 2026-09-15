@@ -1,0 +1,6 @@
+{
+  "name": "neokens",
+  "baseURL": "https://api.v2.neokens.com/v1",
+  "model": "grok-4.6",
+  "apiKeyEnv": "NEOKENS_KEY"
+}

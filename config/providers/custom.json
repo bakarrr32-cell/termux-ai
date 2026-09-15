@@ -1,0 +1,6 @@
+{
+  "name": "custom",
+  "baseURL": "https://ISI-BASE-URL-PROVIDER/v1",
+  "model": "ISI-NAMA-MODEL",
+  "apiKeyEnv": "AI_API_KEY"
+}

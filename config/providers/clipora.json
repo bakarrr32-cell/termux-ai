@@ -1,0 +1,6 @@
+{
+  "name": "clipora",
+  "baseURL": "https://oao.clipora.buzz/v1",
+  "model": "gpt-6-astra",
+  "apiKeyEnv": "CLIPORA_API_KEY"
+}
