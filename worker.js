@@ -14,25 +14,25 @@ const MODEL = "gpt-5.6-luna";
 async function detectProvider(apiKey) {
   for (const provider of PROVIDERS) {
     try {
-      const response = await fetch(provider.url, {
-        method: "POST",
+      const modelsUrl = provider.url.replace(
+        /\/chat\/completions\/?$/,
+        "/models"
+      );
+
+      const response = await fetch(modelsUrl, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
           "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: [
-            {
-              role: "user",
-              content: "ping"
-            }
-          ],
-          stream: false
-        })
+        }
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        continue;
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data?.data)) {
         return provider;
       }
     } catch {
