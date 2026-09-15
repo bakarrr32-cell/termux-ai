@@ -690,10 +690,27 @@ function restoreConversationUI() {
   }
 
   for (const item of conversationHistory) {
-    addMessage(
-      item.role === "user" ? "user" : "ai",
-      item.content
-    );
+    if (item.role === "assistant") {
+      const box = document.createElement("div");
+      box.className = "message ai";
+
+      const content = document.createElement("div");
+
+      const label = document.createElement("div");
+      label.className = "label";
+      label.textContent = "AI";
+
+      const textElement = document.createElement("div");
+      textElement.className = "markdown";
+      textElement.innerHTML = renderMarkdown(item.content);
+
+      content.appendChild(label);
+      content.appendChild(textElement);
+      box.appendChild(content);
+      inner.appendChild(box);
+    } else {
+      addMessage("user", item.content);
+    }
   }
 
   chat.scrollTop = chat.scrollHeight;
