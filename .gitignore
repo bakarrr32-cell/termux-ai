@@ -32,3 +32,19 @@ backups/
 
 # OS
 Thumbs.db
+
+# Local AI state / conversations
+data/
+
+# Local backups and archives
+backups/
+*.backup
+*.backup-*
+*.before-*
+*.pre-*
+*.safe
+*.tgz
+
+# Cloudflare
+.wrangler/
+.dev.vars
