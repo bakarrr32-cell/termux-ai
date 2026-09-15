@@ -21,47 +21,69 @@ async function requestProvider(
   let lastAuthError = null;
 
   for (const provider of PROVIDERS) {
-    try {
-      const response = await fetch(provider.url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify(
-          buildRequestBody(
-            message,
-            images,
-            history,
-            stream,
-            provider.name
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const response = await fetch(provider.url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify(
+            buildRequestBody(
+              message,
+              images,
+              history,
+              stream,
+              provider.name
+            )
           )
-        )
-      });
+        });
 
-      if (
-        response.status === 401 ||
-        response.status === 403 ||
-        response.status === 404
-      ) {
-        lastAuthError = response;
+        if (
+          response.status === 401 ||
+          response.status === 403 ||
+          response.status === 404
+        ) {
+          lastAuthError = response;
 
-        try {
-          await response.text();
-        } catch {}
+          try {
+            await response.text();
+          } catch {}
 
-        continue;
+          break;
+        }
+
+        if (
+          attempt === 0 &&
+          (
+            response.status === 502 ||
+            response.status === 503 ||
+            response.status === 504 ||
+            response.status === 524
+          )
+        ) {
+          try {
+            await response.text();
+          } catch {}
+
+          continue;
+        }
+
+        return {
+          provider,
+          response
+        };
+      } catch (error) {
+        if (attempt === 0) {
+          continue;
+        }
+
+        return {
+          provider,
+          error
+        };
       }
-
-      return {
-        provider,
-        response
-      };
-    } catch (error) {
-      return {
-        provider,
-        error
-      };
     }
   }
 
