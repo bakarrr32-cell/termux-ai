@@ -9,38 +9,66 @@ const PROVIDERS = [
   }
 ];
 
-const MODEL = "deepseek-v4-flash";
+const MODEL = "gpt-5.6-luna";
 
-async function detectProvider(apiKey) {
+async function requestProvider(
+  apiKey,
+  message,
+  images,
+  history,
+  stream
+) {
+  let lastAuthError = null;
+
   for (const provider of PROVIDERS) {
     try {
-      const modelsUrl = provider.url.replace(
-        /\/chat\/completions\/?$/,
-        "/models"
-      );
-
-      const response = await fetch(modelsUrl, {
-        method: "GET",
+      const response = await fetch(provider.url, {
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Authorization": `Bearer ${apiKey}`
-        }
+        },
+        body: JSON.stringify(
+          buildRequestBody(
+            message,
+            images,
+            history,
+            stream,
+            provider.name
+          )
+        )
       });
 
-      if (!response.ok) {
+      if (
+        response.status === 401 ||
+        response.status === 403 ||
+        response.status === 404
+      ) {
+        lastAuthError = response;
+
+        try {
+          await response.text();
+        } catch {}
+
         continue;
       }
 
-      const data = await response.json();
-
-      if (Array.isArray(data?.data)) {
-        return provider;
-      }
-    } catch {
-      // Lanjut ke provider berikutnya.
+      return {
+        provider,
+        response
+      };
+    } catch (error) {
+      return {
+        provider,
+        error
+      };
     }
   }
 
-  return null;
+  return {
+    provider: null,
+    response: lastAuthError
+  };
 }
 
 const SYSTEM_PROMPT = `
@@ -101,8 +129,10 @@ FORMAT PREMIUM:
 Buat jawaban terasa rapi dan profesional seperti aplikasi AI modern.
 Gunakan struktur visual yang sesuai dengan isi, tetapi jangan memaksakan tabel atau heading jika tidak diperlukan.
 
-Jika pengguna bertanya model atau provider yang digunakan, jawab:
-"Saya menggunakan GPT-5.6 Luna melalui UniKey."
+Jika pengguna bertanya model atau provider yang digunakan:
+- Gunakan informasi runtime "Provider aktif" dan "Model aktif".
+- Jangan menggunakan nama model atau provider yang di-hard-code di prompt.
+- Jangan mengarang model atau provider lain.
 `;
 
 function json(data, status = 200) {
@@ -185,7 +215,8 @@ function buildRequestBody(
         content: `${SYSTEM_PROMPT.trim()}
 
 Provider aktif: ${providerName || "tidak diketahui"}.
-Jika pengguna bertanya provider yang digunakan, sebutkan provider aktif tersebut.`
+Model aktif: ${MODEL}.
+Jika pengguna bertanya model atau provider yang sedang digunakan, jawab berdasarkan informasi runtime di atas.`
       },
       ...sanitizeHistory(history),
       {
@@ -207,14 +238,6 @@ async function handleChat(request, stream = false) {
   if (!apiKey) {
     return json({
       error: "API key belum diatur. Silakan login terlebih dahulu."
-    }, 401);
-  }
-
-  const provider = await detectProvider(apiKey);
-
-  if (!provider) {
-    return json({
-      error: "API key tidak cocok dengan provider yang terdaftar."
     }, 401);
   }
 
@@ -241,23 +264,27 @@ async function handleChat(request, stream = false) {
     ? body.images.slice(0, 4)
     : [];
 
-  let providerResponse;
+  const result = await requestProvider(
+    apiKey,
+    message,
+    images,
+    history,
+    stream
+  );
 
-  try {
-    providerResponse = await fetch(provider.url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(
-        buildRequestBody(message, images, history, stream, provider.name)
-      )
-    });
-  } catch (error) {
+  const provider = result.provider;
+  const providerResponse = result.response;
+
+  if (result.error) {
     return json({
-      error: `Gagal menghubungi provider: ${error.message}`
+      error: `Gagal menghubungi provider: ${result.error.message}`
     }, 502);
+  }
+
+  if (!provider || !providerResponse) {
+    return json({
+      error: "API key tidak cocok dengan provider yang terdaftar."
+    }, 401);
   }
 
   if (!providerResponse.ok) {
