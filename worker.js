@@ -1,4 +1,4 @@
-const PROVIDER_URL = "https://api.v2.neokens.com/v1/chat/completions";
+const PROVIDER_URL = "https://www.getunikey.ai/v1/chat/completions";
 const MODEL = "gpt-5.6-luna";
 
 const SYSTEM_PROMPT = `Kamu adalah asisten AI general-purpose yang cerdas, cepat, natural, dan mampu membantu pengguna dalam berbagai bidang.
