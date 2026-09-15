@@ -534,6 +534,110 @@ body.termux-logged-out > *:not(#termux-login-screen) {
 }
 </style>
 
+
+<style id="termux-multi-chat-css">
+#conversation-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(320px, 85vw);
+  z-index: 10000;
+  background: var(--background, #fff);
+  border-right: 1px solid rgba(127,127,127,.2);
+  box-shadow: 8px 0 30px rgba(0,0,0,.15);
+  transform: translateX(-105%);
+  transition: transform .2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+#conversation-sidebar.open {
+  transform: translateX(0);
+}
+
+#conversation-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(127,127,127,.2);
+}
+
+#conversation-sidebar-title {
+  font-weight: 700;
+}
+
+#conversation-close-button {
+  border: 0;
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+#new-conversation-button {
+  margin: 12px;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+}
+
+#conversation-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 8px 16px;
+}
+
+.conversation-item {
+  width: 100%;
+  display: block;
+  padding: 11px 12px;
+  margin-bottom: 5px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+.conversation-item:hover {
+  background: rgba(127,127,127,.12);
+}
+
+.conversation-item.active {
+  background: rgba(127,127,127,.18);
+}
+
+.conversation-item-title {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.conversation-empty {
+  padding: 20px 12px;
+  text-align: center;
+  opacity: .6;
+}
+
+#conversation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,.25);
+  display: none;
+}
+
+#conversation-overlay.open {
+  display: block;
+}
+</style>
+
 </head>
 
 <body class="termux-logged-out">
@@ -573,8 +677,27 @@ body.termux-logged-out > *:not(#termux-login-screen) {
     Termux AI
   </div>
 
-  <button id="export-conversation" class="header-button" type="button" title="Export conversation">⇩</button>
+
+<button id="conversation-history-button" class="header-button" type="button" title="Riwayat percakapan">☰</button>
+<button id="new-conversation-header-button" class="header-button" type="button" title="Obrolan baru">＋</button>
+<button id="export-conversation" class="header-button" type="button" title="Export conversation">⇩</button>
 </header>
+
+
+<div id="conversation-overlay"></div>
+
+<aside id="conversation-sidebar">
+  <div id="conversation-sidebar-header">
+    <span id="conversation-sidebar-title">Riwayat Percakapan</span>
+    <button id="conversation-close-button" type="button">×</button>
+  </div>
+
+  <button id="new-conversation-button" type="button">
+    ＋ Obrolan Baru
+  </button>
+
+  <div id="conversation-list"></div>
+</aside>
 
 <main id="chat">
   <div class="chat-inner">
@@ -613,47 +736,167 @@ const inner = document.querySelector(".chat-inner");
 const input = document.getElementById("message");
 const send = document.getElementById("send");
 
-const CONVERSATION_KEY = "termux_ai_conversation";
+// TERMUX_MULTI_CHAT_FINAL
+
+const CONVERSATIONS_KEY = "termux_ai_conversations";
+const ACTIVE_CONVERSATION_KEY = "termux_ai_active_conversation";
+const LEGACY_CONVERSATION_KEY = "termux_ai_conversation";
+
+let conversations = {};
+let activeConversationId = "";
 let conversationHistory = [];
 
-function loadConversationHistory() {
-  try {
-    const saved = localStorage.getItem(CONVERSATION_KEY);
-    const data = saved ? JSON.parse(saved) : [];
+function makeConversationId() {
+  return "chat_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+}
 
-    if (Array.isArray(data)) {
-      conversationHistory = data
-        .filter(item =>
-          item &&
-          (item.role === "user" || item.role === "assistant") &&
-          typeof item.content === "string"
-        )
-        .slice(-30);
-    }
+function saveAllConversations() {
+  try {
+    localStorage.setItem(
+      CONVERSATIONS_KEY,
+      JSON.stringify(conversations)
+    );
+
+    localStorage.setItem(
+      ACTIVE_CONVERSATION_KEY,
+      activeConversationId
+    );
   } catch (error) {
-    console.warn("Gagal memuat percakapan:", error);
-    conversationHistory = [];
+    console.warn("Gagal menyimpan riwayat:", error);
   }
 }
 
-function saveConversationHistory() {
+function migrateOldConversation() {
+  if (Object.keys(conversations).length !== 0) return;
+
+  const oldSaved = localStorage.getItem(LEGACY_CONVERSATION_KEY);
+
+  if (!oldSaved) return;
+
   try {
-    localStorage.setItem(
-      CONVERSATION_KEY,
-      JSON.stringify(conversationHistory.slice(-30))
-    );
+    const oldHistory = JSON.parse(oldSaved);
+
+    if (!Array.isArray(oldHistory) || oldHistory.length === 0) {
+      return;
+    }
+
+    const id = makeConversationId();
+
+    conversations[id] = {
+      id,
+      title: String(oldHistory[0]?.content || "Percakapan lama")
+        .replace(/\\s+/g, " ")
+        .trim()
+        .slice(0, 60) || "Percakapan lama",
+      messages: oldHistory.slice(-30),
+      updatedAt: Date.now()
+    };
+
+    activeConversationId = id;
+    saveAllConversations();
   } catch (error) {
-    console.warn("Riwayat terlalu besar, menyimpan versi teks saja.");
-
-    try {
-      const compact = conversationHistory.slice(-30).map(item => ({
-        role: item.role,
-        content: String(item.content || "").slice(0, 12000)
-      }));
-
-      localStorage.setItem(CONVERSATION_KEY, JSON.stringify(compact));
-    } catch {}
+    console.warn("Migrasi percakapan lama gagal:", error);
   }
+}
+
+function createNewConversation() {
+  const id = makeConversationId();
+
+  conversations[id] = {
+    id,
+    title: "Obrolan baru",
+    messages: [],
+    updatedAt: Date.now()
+  };
+
+  activeConversationId = id;
+  conversationHistory = [];
+
+  saveAllConversations();
+}
+
+function loadConversationHistory() {
+  try {
+    const saved = localStorage.getItem(CONVERSATIONS_KEY);
+
+    if (saved) {
+      const data = JSON.parse(saved);
+
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        conversations = data;
+      }
+    }
+  } catch (error) {
+    console.warn("Gagal membaca riwayat:", error);
+    conversations = {};
+  }
+
+  migrateOldConversation();
+
+  const savedActive =
+    localStorage.getItem(ACTIVE_CONVERSATION_KEY);
+
+  if (
+    savedActive &&
+    conversations[savedActive]
+  ) {
+    activeConversationId = savedActive;
+  }
+
+  if (!activeConversationId) {
+    const ids = Object.keys(conversations);
+
+    if (ids.length) {
+      ids.sort(
+        (a, b) =>
+          (conversations[b].updatedAt || 0) -
+          (conversations[a].updatedAt || 0)
+      );
+
+      activeConversationId = ids[0];
+    }
+  }
+
+  if (!activeConversationId) {
+    createNewConversation();
+  }
+
+  const current = conversations[activeConversationId];
+
+  conversationHistory = Array.isArray(current?.messages)
+    ? current.messages.slice(-30)
+    : [];
+}
+
+function saveCurrentConversation() {
+  const current = conversations[activeConversationId];
+
+  if (!current) return;
+
+  current.messages = conversationHistory.slice(-30);
+  current.updatedAt = Date.now();
+
+  if (
+    current.title === "Obrolan baru" &&
+    conversationHistory.length
+  ) {
+    const firstUser = conversationHistory.find(
+      item =>
+        item.role === "user" &&
+        typeof item.content === "string" &&
+        item.content.trim()
+    );
+
+    if (firstUser) {
+      current.title = firstUser.content
+        .replace(/\\s+/g, " ")
+        .trim()
+        .slice(0, 60);
+    }
+  }
+
+  saveAllConversations();
+  renderConversationList();
 }
 
 function rememberUserMessage(text) {
@@ -665,7 +908,7 @@ function rememberUserMessage(text) {
   });
 
   conversationHistory = conversationHistory.slice(-30);
-  saveConversationHistory();
+  saveCurrentConversation();
 }
 
 function rememberAIMessage(text) {
@@ -677,7 +920,7 @@ function rememberAIMessage(text) {
   });
 
   conversationHistory = conversationHistory.slice(-30);
-  saveConversationHistory();
+  saveCurrentConversation();
 }
 
 function restoreConversationUI() {
@@ -716,8 +959,86 @@ function restoreConversationUI() {
   chat.scrollTop = chat.scrollHeight;
 }
 
+function renderConversationList() {
+  const list = document.getElementById("conversation-list");
+
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  const ids = Object.keys(conversations);
+
+  ids.sort(
+    (a, b) =>
+      (conversations[b].updatedAt || 0) -
+      (conversations[a].updatedAt || 0)
+  );
+
+  if (!ids.length) {
+    list.innerHTML =
+      '<div class="conversation-empty">Belum ada percakapan.</div>';
+    return;
+  }
+
+  for (const id of ids) {
+    const data = conversations[id];
+
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className =
+      "conversation-item" +
+      (id === activeConversationId ? " active" : "");
+
+    const title = document.createElement("span");
+    title.className = "conversation-item-title";
+    title.textContent = data.title || "Obrolan baru";
+
+    item.appendChild(title);
+
+    item.onclick = function() {
+      activeConversationId = id;
+      saveAllConversations();
+      location.reload();
+    };
+
+    list.appendChild(item);
+  }
+}
+
+function openConversationHistory() {
+  const sidebar =
+    document.getElementById("conversation-sidebar");
+
+  const overlay =
+    document.getElementById("conversation-overlay");
+
+  sidebar?.classList.add("open");
+  overlay?.classList.add("open");
+
+  renderConversationList();
+}
+
+function closeConversationHistory() {
+  document
+    .getElementById("conversation-sidebar")
+    ?.classList.remove("open");
+
+  document
+    .getElementById("conversation-overlay")
+    ?.classList.remove("open");
+}
+
+function startNewConversation() {
+  createNewConversation();
+  location.reload();
+}
+
 loadConversationHistory();
+
 setTimeout(restoreConversationUI, 0);
+
+setTimeout(renderConversationList, 0);
+
 
 
 function addMessage(type, text, images = []) {
@@ -1702,6 +2023,27 @@ if (exportButton) {
   });
 
 })();
+
+document
+  .getElementById("conversation-history-button")
+  ?.addEventListener("click", openConversationHistory);
+
+document
+  .getElementById("conversation-close-button")
+  ?.addEventListener("click", closeConversationHistory);
+
+document
+  .getElementById("conversation-overlay")
+  ?.addEventListener("click", closeConversationHistory);
+
+document
+  .getElementById("new-conversation-button")
+  ?.addEventListener("click", startNewConversation);
+
+document
+  .getElementById("new-conversation-header-button")
+  ?.addEventListener("click", startNewConversation);
+
 </script>
 
 </body>
