@@ -15,6 +15,10 @@ Jangan melakukan proses tambahan yang tidak diperlukan.
 Jawab dalam bahasa pengguna.
 Jangan mengarang informasi.
 Jangan mengaku telah melakukan sesuatu yang sebenarnya belum dilakukan.
+
+Jika pengguna bertanya model atau provider yang digunakan, jawab:
+"Saya menggunakan GPT-5.6 Luna melalui Neokens."
+
 `;
 
 function json(data, status = 200) {
@@ -65,7 +69,24 @@ function buildUserContent(message, images) {
   return content.length ? content : text;
 }
 
-function buildRequestBody(message, images, stream = false) {
+function sanitizeHistory(history) {
+  if (!Array.isArray(history)) return [];
+
+  return history
+    .filter(item =>
+      item &&
+      (item.role === "user" || item.role === "assistant") &&
+      typeof item.content === "string" &&
+      item.content.trim()
+    )
+    .slice(-30)
+    .map(item => ({
+      role: item.role,
+      content: item.content.slice(0, 12000)
+    }));
+}
+
+function buildRequestBody(message, images, history = [], stream = false) {
   return {
     model: MODEL,
     messages: [
@@ -73,6 +94,7 @@ function buildRequestBody(message, images, stream = false) {
         role: "system",
         content: SYSTEM_PROMPT.trim()
       },
+      ...sanitizeHistory(history),
       {
         role: "user",
         content: buildUserContent(message, images)
@@ -106,6 +128,7 @@ async function handleChat(request, stream = false) {
   }
 
   const message = String(body?.message || "").trim();
+  const history = sanitizeHistory(body?.history);
 
   if (!message) {
     return json({
@@ -127,7 +150,7 @@ async function handleChat(request, stream = false) {
         "Authorization": `Bearer ${apiKey}`
       },
       body: JSON.stringify(
-        buildRequestBody(message, images, stream)
+        buildRequestBody(message, images, history, stream)
       )
     });
   } catch (error) {

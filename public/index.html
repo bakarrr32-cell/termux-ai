@@ -613,6 +613,96 @@ const inner = document.querySelector(".chat-inner");
 const input = document.getElementById("message");
 const send = document.getElementById("send");
 
+const CONVERSATION_KEY = "termux_ai_conversation";
+let conversationHistory = [];
+
+function loadConversationHistory() {
+  try {
+    const saved = localStorage.getItem(CONVERSATION_KEY);
+    const data = saved ? JSON.parse(saved) : [];
+
+    if (Array.isArray(data)) {
+      conversationHistory = data
+        .filter(item =>
+          item &&
+          (item.role === "user" || item.role === "assistant") &&
+          typeof item.content === "string"
+        )
+        .slice(-30);
+    }
+  } catch (error) {
+    console.warn("Gagal memuat percakapan:", error);
+    conversationHistory = [];
+  }
+}
+
+function saveConversationHistory() {
+  try {
+    localStorage.setItem(
+      CONVERSATION_KEY,
+      JSON.stringify(conversationHistory.slice(-30))
+    );
+  } catch (error) {
+    console.warn("Riwayat terlalu besar, menyimpan versi teks saja.");
+
+    try {
+      const compact = conversationHistory.slice(-30).map(item => ({
+        role: item.role,
+        content: String(item.content || "").slice(0, 12000)
+      }));
+
+      localStorage.setItem(CONVERSATION_KEY, JSON.stringify(compact));
+    } catch {}
+  }
+}
+
+function rememberUserMessage(text) {
+  if (!text) return;
+
+  conversationHistory.push({
+    role: "user",
+    content: text
+  });
+
+  conversationHistory = conversationHistory.slice(-30);
+  saveConversationHistory();
+}
+
+function rememberAIMessage(text) {
+  if (!text) return;
+
+  conversationHistory.push({
+    role: "assistant",
+    content: text
+  });
+
+  conversationHistory = conversationHistory.slice(-30);
+  saveConversationHistory();
+}
+
+function restoreConversationUI() {
+  if (!conversationHistory.length) return;
+
+  const welcome = document.getElementById("welcome");
+
+  if (welcome) {
+    welcome.remove();
+  }
+
+  for (const item of conversationHistory) {
+    addMessage(
+      item.role === "user" ? "user" : "ai",
+      item.content
+    );
+  }
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+loadConversationHistory();
+setTimeout(restoreConversationUI, 0);
+
+
 function addMessage(type, text, images = []) {
   const welcome = document.getElementById("welcome");
 
@@ -1106,6 +1196,8 @@ async function sendMessage() {
   input.style.height = "auto";
   send.disabled = true;
 
+  rememberUserMessage(text);
+
   const typing = addTyping();
 
   let aiBox = null;
@@ -1174,7 +1266,8 @@ async function sendMessage() {
       },
       body: JSON.stringify({
         message: text,
-        images: imagesForMessage.map(image => ({ name: image.name, type: image.type, dataUrl: image.dataUrl }))
+        images: imagesForMessage.map(image => ({ name: image.name, type: image.type, dataUrl: image.dataUrl })),
+        history: conversationHistory
       })
     });
 
@@ -1328,6 +1421,8 @@ async function sendMessage() {
     if (aiText) {
       aiText.innerHTML = renderMarkdown(fullResponse);
     }
+
+    rememberAIMessage(fullResponse);
 
     if (typing && typing.parentNode) {
       typing.remove();
