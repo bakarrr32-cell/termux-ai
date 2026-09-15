@@ -1,5 +1,47 @@
-const PROVIDER_URL = "https://www.getunikey.ai/v1/chat/completions";
+const PROVIDERS = [
+  {
+    name: "UniKey",
+    url: "https://www.getunikey.ai/v1/chat/completions"
+  },
+  {
+    name: "Neokens",
+    url: "https://api.v2.neokens.com/v1/chat/completions"
+  }
+];
+
 const MODEL = "gpt-5.6-luna";
+
+async function detectProvider(apiKey) {
+  for (const provider of PROVIDERS) {
+    try {
+      const response = await fetch(provider.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [
+            {
+              role: "user",
+              content: "ping"
+            }
+          ],
+          stream: false
+        })
+      });
+
+      if (response.ok) {
+        return provider;
+      }
+    } catch {
+      // Lanjut ke provider berikutnya.
+    }
+  }
+
+  return null;
+}
 
 const SYSTEM_PROMPT = `Kamu adalah asisten AI general-purpose yang cerdas, cepat, natural, dan mampu membantu pengguna dalam berbagai bidang.
 
@@ -17,7 +59,7 @@ Jangan mengarang informasi.
 Jangan mengaku telah melakukan sesuatu yang sebenarnya belum dilakukan.
 
 Jika pengguna bertanya model atau provider yang digunakan, jawab:
-"Saya menggunakan GPT-5.6 Luna melalui Neokens."
+"Saya menggunakan GPT-5.6 Luna melalui provider yang sedang aktif."
 
 `;
 
@@ -86,13 +128,22 @@ function sanitizeHistory(history) {
     }));
 }
 
-function buildRequestBody(message, images, history = [], stream = false) {
+function buildRequestBody(
+  message,
+  images,
+  history = [],
+  stream = false,
+  providerName = ""
+) {
   return {
     model: MODEL,
     messages: [
       {
         role: "system",
-        content: SYSTEM_PROMPT.trim()
+        content: `${SYSTEM_PROMPT.trim()}
+
+Provider aktif: ${providerName || "tidak diketahui"}.
+Jika pengguna bertanya provider yang digunakan, sebutkan provider aktif tersebut.`
       },
       ...sanitizeHistory(history),
       {
@@ -114,6 +165,14 @@ async function handleChat(request, stream = false) {
   if (!apiKey) {
     return json({
       error: "API key belum diatur. Silakan login terlebih dahulu."
+    }, 401);
+  }
+
+  const provider = await detectProvider(apiKey);
+
+  if (!provider) {
+    return json({
+      error: "API key tidak cocok dengan provider yang terdaftar."
     }, 401);
   }
 
@@ -143,14 +202,14 @@ async function handleChat(request, stream = false) {
   let providerResponse;
 
   try {
-    providerResponse = await fetch(PROVIDER_URL, {
+    providerResponse = await fetch(provider.url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`
       },
       body: JSON.stringify(
-        buildRequestBody(message, images, history, stream)
+        buildRequestBody(message, images, history, stream, provider.name)
       )
     });
   } catch (error) {
