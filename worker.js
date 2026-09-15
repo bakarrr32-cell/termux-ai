@@ -9,7 +9,7 @@ const PROVIDERS = [
   }
 ];
 
-const MODEL = "gpt-5.6-luna";
+const MODEL = "deepseek-v4-flash";
 
 async function detectProvider(apiKey) {
   for (const provider of PROVIDERS) {
