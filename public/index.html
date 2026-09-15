@@ -725,7 +725,256 @@ body.termux-logged-out > *:not(#termux-login-screen) {
 }
 </style>
 
-</head>
+
+<style id="termux-multi-chat-style-v3">
+/* TERMUX_MULTI_CHAT_STYLE_V3 */
+
+/* ===== SIDEBAR ===== */
+
+#conversation-sidebar {
+  background: #0b0f14 !important;
+  color: #f5f7fa !important;
+  border-right: 1px solid rgba(255,255,255,.10) !important;
+}
+
+#conversation-sidebar * {
+  color: inherit;
+}
+
+#conversation-sidebar-header {
+  background: #0b0f14 !important;
+  border-bottom: 1px solid rgba(255,255,255,.09) !important;
+}
+
+#conversation-sidebar-title {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+#conversation-close-button {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+
+#new-conversation-button {
+  background: #1b2028 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+#new-conversation-button:hover {
+  background: #252c36 !important;
+}
+
+.conversation-item {
+  background: transparent !important;
+  color: #e5e7eb !important;
+  border: 1px solid transparent !important;
+}
+
+.conversation-item-title {
+  color: #e5e7eb !important;
+}
+
+.conversation-item:hover {
+  background: rgba(255,255,255,.07) !important;
+}
+
+.conversation-item.active {
+  background: rgba(255,255,255,.11) !important;
+  color: #ffffff !important;
+}
+
+.conversation-item.active .conversation-item-title {
+  color: #ffffff !important;
+}
+
+.conversation-empty {
+  color: #9ca3af !important;
+}
+
+#conversation-overlay {
+  background: rgba(0,0,0,.55) !important;
+}
+
+
+/* ===== HEADER ===== */
+
+/*
+  Tombol riwayat dan obrolan baru jangan ikut
+  memenuhi area tengah header.
+*/
+
+#conversation-history-button,
+#new-conversation-header-button {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 20 !important;
+
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  padding: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 0 !important;
+  background: transparent !important;
+  color: #d8dce2 !important;
+
+  font-size: 25px !important;
+  line-height: 1 !important;
+}
+
+#conversation-history-button {
+  left: 50% !important;
+  margin-left: -47px !important;
+}
+
+#new-conversation-header-button {
+  left: 50% !important;
+  margin-left: 5px !important;
+}
+
+#conversation-history-button:hover,
+#new-conversation-header-button:hover {
+  background: rgba(255,255,255,.07) !important;
+  border-radius: 10px !important;
+}
+
+
+/* Jangan sampai tombol tambahan ikut menggeser
+   layout header utama. */
+
+#conversation-history-button + #new-conversation-header-button {
+  flex: 0 0 auto !important;
+}
+
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 600px) {
+  #conversation-history-button,
+  #new-conversation-header-button {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+  }
+
+  #conversation-history-button {
+    margin-left: -46px !important;
+  }
+
+  #new-conversation-header-button {
+    margin-left: 4px !important;
+  }
+
+  #conversation-sidebar {
+    width: min(310px, 82vw) !important;
+  }
+}
+</style>
+
+
+<style id="termux-multi-chat-style-v4">
+/* TERMUX_MULTI_CHAT_STYLE_V4 */
+
+/* Header utama tetap bersih */
+#new-conversation-header-button {
+  display: none !important;
+}
+
+/* Tombol riwayat di kiri atas */
+#conversation-history-button {
+  position: absolute !important;
+  left: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+
+  border: 0 !important;
+  border-radius: 10px !important;
+
+  background: transparent !important;
+  color: inherit !important;
+
+  font-size: 22px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+#conversation-history-button:hover {
+  background: rgba(127,127,127,.12) !important;
+}
+
+/* Sidebar */
+#conversation-sidebar {
+  background: #0b0f14 !important;
+  color: #f5f7fa !important;
+}
+
+#conversation-sidebar-header {
+  background: #0b0f14 !important;
+}
+
+#conversation-sidebar-title {
+  color: #ffffff !important;
+}
+
+#conversation-close-button {
+  color: #ffffff !important;
+}
+
+#new-conversation-button {
+  background: #171c23 !important;
+  color: #ffffff !important;
+}
+
+#new-conversation-button:hover {
+  background: #252c36 !important;
+}
+
+.conversation-item {
+  color: #e5e7eb !important;
+  background: transparent !important;
+}
+
+.conversation-item-title {
+  color: #e5e7eb !important;
+}
+
+.conversation-item:hover {
+  background: rgba(255,255,255,.07) !important;
+}
+
+.conversation-item.active {
+  background: rgba(255,255,255,.11) !important;
+}
+
+.conversation-item.active .conversation-item-title {
+  color: #ffffff !important;
+}
+
+@media (max-width: 600px) {
+  #conversation-history-button {
+    left: 8px !important;
+  }
+}
+</style>
+\n</head>
 
 <body class="termux-logged-out">
 
