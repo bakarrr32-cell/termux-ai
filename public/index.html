@@ -2072,9 +2072,18 @@ function highlightCode(code, language) {
     } else if (keywords.has(token)) {
       result += '<span class="syntax-keyword">' + escaped + "</span>";
     } else if (
+      /^(Math|JSON|Date|Object|Array|String|Number|Boolean|Promise|RegExp|Map|Set|Error|console)$/.test(token)
+    ) {
+      result += '<span class="syntax-builtin">' + escaped + "</span>";
+    } else if (
       /^\s*\(/.test(code.slice(match.index + token.length))
     ) {
       result += '<span class="syntax-function">' + escaped + "</span>";
+    } else if (
+      /^(API_URL|API_KEY|BASE_URL|MODEL|MAX_RETRY|PORT|HOST)$/.test(token) ||
+      /^[A-Z][A-Z0-9_]{2,}$/.test(token)
+    ) {
+      result += '<span class="syntax-constant">' + escaped + "</span>";
     } else if (
       /\b(const|let|var)\s+$/.test(code.slice(0, match.index))
     ) {
@@ -2083,15 +2092,6 @@ function highlightCode(code, language) {
       /^\s*\./.test(code.slice(match.index - 1, match.index + token.length))
     ) {
       result += '<span class="syntax-property">' + escaped + "</span>";
-    } else if (
-      /^(API_URL|API_KEY|BASE_URL|MODEL|MAX_RETRY|PORT|HOST)$/.test(token) ||
-      /^[A-Z][A-Z0-9_]{2,}$/.test(token)
-    ) {
-      result += '<span class="syntax-constant">' + escaped + "</span>";
-    } else if (
-      /^(Math|JSON|Date|Object|Array|String|Number|Boolean|Promise|RegExp|Map|Set|Error|console)$/.test(token)
-    ) {
-      result += '<span class="syntax-builtin">' + escaped + "</span>";
     } else if (isHtml && /^[A-Za-z][\w-]*$/.test(token)) {
       result += '<span class="syntax-function">' + escaped + "</span>";
     } else {
