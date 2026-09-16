@@ -565,7 +565,289 @@ textarea::placeholder {
     padding-right: 10px;
   }
 }
-</style>
+
+/* TERMUX AI THEME SYSTEM V2 */
+
+/* =========================
+   DARK THEME
+   ========================= */
+
+html:not(.light) {
+  color-scheme: dark;
+}
+
+/* =========================
+   LIGHT THEME
+   ========================= */
+
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background: #ffffff !important;
+  color: #171717 !important;
+}
+
+/* Header */
+html.light header {
+  background: #ffffff !important;
+  color: #171717 !important;
+  border-color: #e5e5e5 !important;
+}
+
+html.light header .brand {
+  color: #171717 !important;
+}
+
+html.light .header-button {
+  color: #333333 !important;
+}
+
+/* Main chat */
+html.light #chat,
+html.light main,
+html.light .chat-container,
+html.light .messages {
+  background: #ffffff !important;
+  color: #171717 !important;
+}
+
+/* Sidebar */
+html.light #conversation-sidebar {
+  background: #f7f7f8 !important;
+  color: #171717 !important;
+  border-color: #e5e5e5 !important;
+}
+
+html.light #conversation-sidebar-header {
+  background: #f7f7f8 !important;
+  color: #171717 !important;
+  border-color: #e5e5e5 !important;
+}
+
+html.light .conversation-item {
+  color: #222222 !important;
+}
+
+html.light .conversation-item:hover {
+  background: #e9e9eb !important;
+}
+
+html.light .conversation-item-title {
+  color: #222222 !important;
+}
+
+/* Markdown */
+html.light .markdown {
+  color: #171717 !important;
+}
+
+html.light .markdown h1,
+html.light .markdown h2,
+html.light .markdown h3,
+html.light .markdown h4,
+html.light .markdown strong,
+html.light .markdown b {
+  color: #111111 !important;
+}
+
+html.light .markdown p,
+html.light .markdown li {
+  color: #252525 !important;
+}
+
+html.light .markdown a {
+  color: #2563eb !important;
+}
+
+/* Inline code */
+html.light .inline-code {
+  background: #eeeeee !important;
+  color: #111111 !important;
+  border-color: #dddddd !important;
+}
+
+/* =========================
+   CODE BLOCK
+   ========================= */
+
+html.light .code-block {
+  background: #f6f7f9 !important;
+  color: #24292f !important;
+  border-color: #d8dee4 !important;
+}
+
+html.light .code-header {
+  background: #e9ecef !important;
+  color: #24292f !important;
+  border-color: #d8dee4 !important;
+}
+
+html.light .code-header button {
+  background: #ffffff !important;
+  color: #24292f !important;
+  border-color: #d0d7de !important;
+}
+
+html.light .code-block pre,
+html.light .code-block code {
+  background: #f6f7f9 !important;
+  color: #24292f !important;
+}
+
+/* Syntax highlighting - light */
+html.light .syntax.keyword {
+  color: #8250df !important;
+}
+
+html.light .syntax.string {
+  color: #0a3069 !important;
+}
+
+html.light .syntax.number {
+  color: #0550ae !important;
+}
+
+html.light .syntax.function {
+  color: #953800 !important;
+}
+
+html.light .syntax.comment {
+  color: #6e7781 !important;
+}
+
+html.light .syntax.boolean {
+  color: #cf222e !important;
+}
+
+/* =========================
+   TABLE
+   ========================= */
+
+html.light .table-wrap {
+  background: #ffffff !important;
+  border-color: #d8dee4 !important;
+}
+
+html.light .table-wrap table {
+  background: #ffffff !important;
+  color: #171717 !important;
+}
+
+html.light .table-wrap th {
+  background: #f3f4f6 !important;
+  color: #111111 !important;
+  border-color: #d8dee4 !important;
+}
+
+html.light .table-wrap td {
+  background: #ffffff !important;
+  color: #252525 !important;
+  border-color: #d8dee4 !important;
+}
+
+html.light .table-wrap tr:nth-child(even) td {
+  background: #fafafa !important;
+}
+
+/* =========================
+   INPUT AREA
+   ========================= */
+
+html.light textarea,
+html.light input,
+html.light select {
+  background: #f7f7f8 !important;
+  color: #171717 !important;
+  border-color: #d8dee4 !important;
+}
+
+html.light textarea::placeholder,
+html.light input::placeholder {
+  color: #777777 !important;
+}
+
+/* Input container */
+html.light #composer,
+html.light .composer,
+html.light .input-container {
+  background: #ffffff !important;
+  border-color: #d8dee4 !important;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+html.light button {
+  color: #222222;
+}
+
+html.light .header-button:hover {
+  background: #eeeeee !important;
+}
+
+/* =========================
+   GENERAL ELEMENTS
+   ========================= */
+
+html.light hr {
+  border-color: #dddddd !important;
+}
+
+html.light .label {
+  color: #666666 !important;
+}
+
+html.light .welcome,
+html.light .welcome p {
+  color: #333333 !important;
+}
+
+/* =========================
+   SCROLLBAR
+   ========================= */
+
+html.light ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #ffffff !important;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #c7c7c7 !important;
+  border-radius: 999px;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #999999 !important;
+}
+
+/* =========================
+   THEME TOGGLE
+   ========================= */
+
+.theme-toggle {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50% !important;
+  cursor: pointer;
+}
+
+html:not(.light) .theme-toggle {
+  background: #171717 !important;
+  color: #ffd83d !important;
+}
+
+html.light .theme-toggle {
+  background: #171717 !important;
+  color: #ffffff !important;
+}
+\n</style>
 
 <style id="termux-login-style">
 #termux-login-screen {
