@@ -9,7 +9,7 @@ const PROVIDERS = [
   }
 ];
 
-const MODEL = "Google/Gemini-3.5-Flash";
+const MODEL = "google/gemini-3.5-flash";
 
 async function requestProvider(
   apiKey,
