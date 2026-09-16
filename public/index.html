@@ -847,7 +847,186 @@ html.light .theme-toggle {
   background: #171717 !important;
   color: #ffffff !important;
 }
-\n</style>
+\n
+/* TERMUX AI COMPLETE SYNTAX PALETTE V2 */
+
+/* DARK */
+.code-block .syntax-keyword {
+  color: #c792ea !important;
+}
+
+.code-block .syntax-function {
+  color: #82aaff !important;
+}
+
+.code-block .syntax-string {
+  color: #c3e88d !important;
+}
+
+.code-block .syntax-number {
+  color: #f78c6c !important;
+}
+
+.code-block .syntax-variable {
+  color: #ffcb6b !important;
+}
+
+.code-block .syntax-error {
+  color: #ff5370 !important;
+  text-decoration: underline wavy;
+}
+
+.code-block .syntax-type {
+  color: #89ddff !important;
+}
+
+.code-block .syntax-class {
+  color: #f07178 !important;
+}
+
+.code-block .syntax-comment {
+  color: #676e95 !important;
+  font-style: italic;
+}
+
+.code-block .syntax-identifier {
+  color: #eeffff !important;
+}
+
+.code-block .syntax-property {
+  color: #80cbc4 !important;
+}
+
+.code-block .syntax-parameter {
+  color: #ffab91 !important;
+}
+
+.code-block .syntax-boolean {
+  color: #b8e986 !important;
+}
+
+.code-block .syntax-regex {
+  color: #f48fb1 !important;
+}
+
+.code-block .syntax-decorator {
+  color: #d05ce3 !important;
+}
+
+.code-block .syntax-builtin {
+  color: #c19a6b !important;
+}
+
+.code-block .syntax-constant {
+  color: #84ffff !important;
+}
+
+.code-block .syntax-operator {
+  color: #ffb74d !important;
+}
+
+.code-block .syntax-warning {
+  color: #ff5252 !important;
+  font-weight: 600;
+}
+
+.code-block .syntax-html-tag {
+  color: #82b1ff !important;
+}
+
+.code-block .syntax-css-value {
+  color: #69f0ae !important;
+}
+
+/* LIGHT */
+html.light .code-block .syntax-keyword {
+  color: #7c3aed !important;
+}
+
+html.light .code-block .syntax-function {
+  color: #2563eb !important;
+}
+
+html.light .code-block .syntax-string {
+  color: #16803c !important;
+}
+
+html.light .code-block .syntax-number {
+  color: #c2410c !important;
+}
+
+html.light .code-block .syntax-variable {
+  color: #a16207 !important;
+}
+
+html.light .code-block .syntax-error {
+  color: #dc2626 !important;
+  text-decoration: underline wavy;
+}
+
+html.light .code-block .syntax-type {
+  color: #0891b2 !important;
+}
+
+html.light .code-block .syntax-class {
+  color: #db2777 !important;
+}
+
+html.light .code-block .syntax-comment {
+  color: #6b7280 !important;
+  font-style: italic;
+}
+
+html.light .code-block .syntax-identifier {
+  color: #24292f !important;
+}
+
+html.light .code-block .syntax-property {
+  color: #0369a1 !important;
+}
+
+html.light .code-block .syntax-parameter {
+  color: #c2410c !important;
+}
+
+html.light .code-block .syntax-boolean {
+  color: #15803d !important;
+}
+
+html.light .code-block .syntax-regex {
+  color: #be185d !important;
+}
+
+html.light .code-block .syntax-decorator {
+  color: #a21caf !important;
+}
+
+html.light .code-block .syntax-builtin {
+  color: #8b5e34 !important;
+}
+
+html.light .code-block .syntax-constant {
+  color: #0891b2 !important;
+}
+
+html.light .code-block .syntax-operator {
+  color: #ea580c !important;
+}
+
+html.light .code-block .syntax-warning {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+html.light .code-block .syntax-html-tag {
+  color: #1d4ed8 !important;
+}
+
+html.light .code-block .syntax-css-value {
+  color: #16a34a !important;
+}
+
+</style>
 
 <style id="termux-login-style">
 #termux-login-screen {
@@ -1894,6 +2073,9 @@ function highlightCode(code, language) {
     lang.includes("typescript") ||
     lang === "ts";
 
+  const isTypeScript =
+    lang.includes("typescript") || lang === "ts";
+
   const isJson = lang === "json";
   const isPython = lang === "python" || lang === "py";
   const isShell =
@@ -1904,51 +2086,245 @@ function highlightCode(code, language) {
   const isHtml =
     lang === "html" ||
     lang === "xml";
+  const isCss =
+    lang === "css" ||
+    lang === "scss" ||
+    lang === "less";
 
-  const keywords = new Set();
-
-  if (jsLike) {
-    [
-      "const","let","var","function","return","if","else","for","while",
-      "do","new","class","extends","import","export","from","async",
-      "await","try","catch","throw","typeof","instanceof","switch",
-      "case","break","continue","this"
-    ].forEach(x => keywords.add(x));
-  }
+  const keywords = new Set([
+    "const","let","var","function","return","if","else","for","while",
+    "do","new","class","extends","import","export","from","async",
+    "await","try","catch","throw","typeof","instanceof","switch",
+    "case","break","continue","this","in","of","default","delete",
+    "yield","static","get","set","super","with"
+  ]);
 
   if (isPython) {
     [
       "def","return","if","elif","else","for","while","in","import",
       "from","as","class","try","except","raise","with","lambda",
-      "yield","async","await","pass","break","continue"
+      "yield","async","await","pass","break","continue","and","or",
+      "not","is","None"
     ].forEach(x => keywords.add(x));
   }
 
   if (isShell) {
     [
       "if","then","else","elif","fi","for","in","do","done",
-      "case","esac","function"
+      "case","esac","function","while","until","select"
     ].forEach(x => keywords.add(x));
   }
 
-  if (isJson) {
-    return escapeHTML(code)
-      .replace(/(&quot;[^&]*?&quot;)(\s*:)/g,
-        '<span class="syntax-function">$1</span>$2'
-      )
-      .replace(/(&quot;(?:\\.|[^&])*?&quot;)/g,
-        '<span class="syntax-string">$1</span>'
-      )
-      .replace(/\b(true|false|null)\b/g,
-        '<span class="syntax-boolean">$1</span>'
-      )
-      .replace(/\b\d+(?:\.\d+)?\b/g,
-        '<span class="syntax-number">$&</span>'
-      );
+  const builtins = new Set([
+    "Math","JSON","Date","Array","Object","String","Number","Boolean",
+    "RegExp","Promise","Map","Set","WeakMap","WeakSet","Symbol",
+    "Error","TypeError","ReferenceError","SyntaxError","console",
+    "window","document","globalThis","process","Buffer","require",
+    "module","exports","parseInt","parseFloat","isNaN","setTimeout",
+    "setInterval","clearTimeout","clearInterval"
+  ]);
+
+  const types = new Set([
+    "string","number","boolean","object","any","unknown","never",
+    "void","undefined","null","User","Product","Response","Request",
+    "Promise","Array","Record","Partial","Required","Readonly"
+  ]);
+
+  const warnings = new Set([
+    "deprecated","deprecation","obsolete","legacy","unsafe"
+  ]);
+
+  const booleans = new Set([
+    "true","false"
+  ]);
+
+  const constants = new Set([
+    "API_URL","BASE_URL","API_KEY","TOKEN","CONFIG","VERSION",
+    "MAX_VALUE","MIN_VALUE","PI","NODE_ENV"
+  ]);
+
+  function span(cls, value) {
+    return '<span class="' + cls + '">' + escapeHTML(value) + "</span>";
   }
 
+  function classifyIdentifier(token, source, index) {
+    const before = source.slice(0, index);
+    const after = source.slice(index + token.length);
+
+    if (warnings.has(token.toLowerCase())) {
+      return span("syntax-warning", token);
+    }
+
+    if (booleans.has(token)) {
+      return span("syntax-boolean", token);
+    }
+
+    if (constants.has(token) || /^[A-Z][A-Z0-9_]{2,}$/.test(token)) {
+      return span("syntax-constant", token);
+    }
+
+    if (keywords.has(token)) {
+      return span("syntax-keyword", token);
+    }
+
+    if (types.has(token)) {
+      return span("syntax-type", token);
+    }
+
+    if (
+      isTypeScript &&
+      (
+        /^[A-Z][A-Za-z0-9_$]*$/.test(token) ||
+        /^(interface|type|enum|namespace)$/.test(token)
+      )
+    ) {
+      return span("syntax-type", token);
+    }
+
+    if (
+      /^[A-Z][A-Za-z0-9_$]*$/.test(token) &&
+      (
+        /\\bclass\\s*$/.test(before) ||
+        /\\bnew\\s*$/.test(before)
+      )
+    ) {
+      return span("syntax-class", token);
+    }
+
+    if (
+      /^[A-Z][A-Za-z0-9_$]*$/.test(token) &&
+      /\\b(class|interface|type)\\s+$/.test(before)
+    ) {
+      return span("syntax-class", token);
+    }
+
+    if (builtins.has(token)) {
+      return span("syntax-builtin", token);
+    }
+
+    if (
+      /^\\s*\\(/.test(after) ||
+      /^\\s*\\(/.test(source.slice(index + token.length))
+    ) {
+      return span("syntax-function", token);
+    }
+
+    if (
+      /^\\s*:/.test(after) &&
+      !isJson
+    ) {
+      return span("syntax-property", token);
+    }
+
+    if (
+      /\\.\\s*$/.test(before)
+    ) {
+      return span("syntax-property", token);
+    }
+
+    if (
+      /^\\s*=/.test(after) ||
+      /^\\s*\\+=/.test(after) ||
+      /^\\s*-=/ .test(after)
+    ) {
+      return span("syntax-variable", token);
+    }
+
+    if (
+      isTypeScript &&
+      /:\\s*$/.test(before)
+    ) {
+      return span("syntax-type", token);
+    }
+
+    if (
+      /^[a-z_$][A-Za-z0-9_$]*$/.test(token)
+    ) {
+      return span("syntax-identifier", token);
+    }
+
+    return span("syntax-identifier", token);
+  }
+
+  /*
+   * HTML: tag diberi kategori khusus.
+   */
+  if (isHtml) {
+    const htmlRegex = /<!--[\\s\\S]*?-->|<\\/?[A-Za-z][^>]*>|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'/g;
+
+    let htmlResult = "";
+    let last = 0;
+    let m;
+
+    while ((m = htmlRegex.exec(code)) !== null) {
+      htmlResult += escapeHTML(code.slice(last, m.index));
+
+      const token = m[0];
+
+      if (token.startsWith("<!--")) {
+        htmlResult += span("syntax-comment", token);
+      } else if (token.startsWith("<")) {
+        htmlResult += span("syntax-html-tag", token);
+      } else {
+        htmlResult += span("syntax-string", token);
+      }
+
+      last = htmlRegex.lastIndex;
+    }
+
+    htmlResult += escapeHTML(code.slice(last));
+    return htmlResult;
+  }
+
+  /*
+   * JSON khusus.
+   */
+  if (isJson) {
+    const jsonRegex =
+      /"(?:\\\\.|[^"\\\\])*"(?=\\s*:)|"(?:\\\\.|[^"\\\\])*"|\\b(?:true|false|null)\\b|-?\\b\\d+(?:\\.\\d+)?\\b/g;
+
+    let result = "";
+    let last = 0;
+    let m;
+
+    while ((m = jsonRegex.exec(code)) !== null) {
+      result += escapeHTML(code.slice(last, m.index));
+
+      const token = m[0];
+
+      if (/^".*"\\s*$/.test(token)) {
+        if (/^\\s*:/.test(code.slice(m.index + token.length))) {
+          result += span("syntax-property", token);
+        } else {
+          result += span("syntax-string", token);
+        }
+      } else if (/^(true|false|null)$/.test(token)) {
+        result += span("syntax-boolean", token);
+      } else {
+        result += span("syntax-number", token);
+      }
+
+      last = jsonRegex.lastIndex;
+    }
+
+    result += escapeHTML(code.slice(last));
+    return result;
+  }
+
+  /*
+   * General tokenizer.
+   *
+   * Urutan penting:
+   * comment
+   * string
+   * regex
+   * decorator
+   * number
+   * operator
+   * identifier
+   */
   const tokenRegex =
-    /(\/\/[^\n]*|#[^\n]*|<!--[\s\S]*?-->|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\`(?:\\.|[^\`\\])*\`|\b\d+(?:\.\d+)?\b|\b[A-Za-z_$][\w$-]*\b)/g;
+    /\\/\\/[^\\n]*|#[^\\n]*|<!--[\\s\\S]*?-->|\\/\\*(?:[\\s\\S]*?)\\*\\/|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'|\\x60(?:\\\\.|[^\\x60\\\\])*\\x60|\\/(?:\\\\.|[^\\/\\n])+\\/[dgimsuvy]*|@[A-Za-z_$][\\w$]*|-?\\b\\d+(?:\\.\\d+)?\\b|===|!==|=>|==|!=|<=|>=|\\+\\+|--|&&|\\|\\||\\?\\?|\\?\\.|\\+=|-=|\\*=|\\/=|\\*\\*|\\*\\*\\*|\\.\\.\\.|[+\\-*\\/%=<>!&|?:~^]=?|\\b[A-Za-z_$][\\w$-]*\\b/g;
 
   let result = "";
   let lastIndex = 0;
@@ -1959,37 +2335,187 @@ function highlightCode(code, language) {
 
     const token = match[0];
     const escaped = escapeHTML(token);
+    const before = code.slice(0, match.index);
+    const after = code.slice(match.index + token.length);
 
+    /*
+     * Comment
+     */
     if (
       token.startsWith("//") ||
-      (token.startsWith("#") && (isPython || isShell)) ||
-      token.startsWith("<!--")
+      token.startsWith("/*") ||
+      token.startsWith("<!--") ||
+      (token.startsWith("#") && (isPython || isShell))
     ) {
       result += '<span class="syntax-comment">' + escaped + "</span>";
-    } else if (
+    }
+
+    /*
+     * Decorator / annotation
+     */
+    else if (token.startsWith("@")) {
+      result += '<span class="syntax-decorator">' + escaped + "</span>";
+    }
+
+    /*
+     * String
+     */
+    else if (
       token.startsWith('"') ||
       token.startsWith("'") ||
-      token.startsWith("\`")
+      token.startsWith("\\x60")
     ) {
       result += '<span class="syntax-string">' + escaped + "</span>";
-    } else if (/^\d/.test(token)) {
+    }
+
+    /*
+     * Regex
+     */
+    else if (
+      token.startsWith("/") &&
+      !token.startsWith("//") &&
+      !token.startsWith("/*")
+    ) {
+      result += '<span class="syntax-regex">' + escaped + "</span>";
+    }
+
+    /*
+     * Number
+     */
+    else if (/^-?\\d/.test(token)) {
       result += '<span class="syntax-number">' + escaped + "</span>";
-    } else if (
-      token === "true" ||
-      token === "false" ||
-      token === "null"
+    }
+
+    /*
+     * Operator
+     */
+    else if (
+      /^(===|!==|=>|==|!=|<=|>=|\\+\\+|--|&&|\\|\\||\\?\\?|\\?\\.|\\+=|-=|\\*=|\\/=|\\*\\*|\\.\\.\\.|[+\\-*\\/%=<>!&|?:~^]=?)$/.test(token)
     ) {
+      result += '<span class="syntax-operator">' + escaped + "</span>";
+    }
+
+    /*
+     * Warning
+     */
+    else if (warnings.has(token.toLowerCase())) {
+      result += '<span class="syntax-warning">' + escaped + "</span>";
+    }
+
+    /*
+     * Boolean
+     */
+    else if (booleans.has(token)) {
       result += '<span class="syntax-boolean">' + escaped + "</span>";
-    } else if (keywords.has(token)) {
+    }
+
+    /*
+     * Keyword
+     */
+    else if (keywords.has(token)) {
       result += '<span class="syntax-keyword">' + escaped + "</span>";
-    } else if (
-      /^\s*\(/.test(code.slice(match.index + token.length))
+    }
+
+    /*
+     * Class
+     */
+    else if (
+      /^[A-Z][A-Za-z0-9_$]*$/.test(token) &&
+      (
+        /\\bclass\\s+$/.test(before) ||
+        /\\bnew\\s+$/.test(before)
+      )
+    ) {
+      result += '<span class="syntax-class">' + escaped + "</span>";
+    }
+
+    /*
+     * Type / Interface
+     */
+    else if (
+      types.has(token) ||
+      (
+        isTypeScript &&
+        /:\\s*$/.test(before)
+      )
+    ) {
+      result += '<span class="syntax-type">' + escaped + "</span>";
+    }
+
+    /*
+     * Built-in
+     */
+    else if (builtins.has(token)) {
+      result += '<span class="syntax-builtin">' + escaped + "</span>";
+    }
+
+    /*
+     * Function
+     */
+    else if (
+      /^\\s*\\(/.test(after) ||
+      /\\bfunction\\s+$/.test(before)
     ) {
       result += '<span class="syntax-function">' + escaped + "</span>";
-    } else if (isHtml && /^[A-Za-z][\w-]*$/.test(token)) {
-      result += '<span class="syntax-function">' + escaped + "</span>";
-    } else {
-      result += escaped;
+    }
+
+    /*
+     * Property
+     */
+    else if (
+      /^\\s*:/.test(after) ||
+      /\\.\\s*$/.test(before)
+    ) {
+      result += '<span class="syntax-property">' + escaped + "</span>";
+    }
+
+    /*
+     * Parameter
+     */
+    else if (
+      /^\\s*[,)]/.test(after) &&
+      /\\([^()]*$/.test(before)
+    ) {
+      result += '<span class="syntax-parameter">' + escaped + "</span>";
+    }
+
+    /*
+     * Constant
+     */
+    else if (
+      constants.has(token) ||
+      /^[A-Z][A-Z0-9_]{2,}$/.test(token)
+    ) {
+      result += '<span class="syntax-constant">' + escaped + "</span>";
+    }
+
+    /*
+     * Variable
+     */
+    else if (
+      /\\b(const|let|var)\\s+$/.test(before)
+    ) {
+      result += '<span class="syntax-variable">' + escaped + "</span>";
+    }
+
+    /*
+     * CSS value
+     */
+    else if (
+      isCss &&
+      (
+        /^#[0-9a-fA-F]{3,8}$/.test(token) ||
+        /^\\d+(?:\\.\\d+)?(?:px|rem|em|vh|vw|%|s|ms)$/.test(token)
+      )
+    ) {
+      result += '<span class="syntax-css-value">' + escaped + "</span>";
+    }
+
+    /*
+     * Identifier biasa
+     */
+    else {
+      result += '<span class="syntax-identifier">' + escaped + "</span>";
     }
 
     lastIndex = tokenRegex.lastIndex;
@@ -1999,6 +2525,7 @@ function highlightCode(code, language) {
 
   return result;
 }
+
 function renderTable(rows) {
   if (!rows || rows.length < 2) return "";
 
