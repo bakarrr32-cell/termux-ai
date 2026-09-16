@@ -5,7 +5,7 @@ const PROVIDERS = [
   }
 ];
 
-const MODEL = "deepseek/deepseek-v4.1-flash";
+const MODEL = "deepseek/deepseek-v4.1-flash:free";
 
 async function requestProvider(
   apiKey,
