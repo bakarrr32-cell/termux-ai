@@ -9,7 +9,7 @@ const PROVIDERS = [
   }
 ];
 
-const MODEL = "deepseek-v4-flash";
+const MODEL = "Google/Gemini-3.5-Flash";
 
 async function requestProvider(
   apiKey,
