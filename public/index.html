@@ -48,6 +48,69 @@ header {
   box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
 }
 
+
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  color: #101014;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.18);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.theme-toggle:active {
+  transform: scale(0.9);
+}
+
+html.light,
+html.light body {
+  background: #ffffff;
+  color: #111111;
+}
+
+html.light .header-button {
+  color: #555555;
+}
+
+html.light .theme-toggle {
+  background: #111111;
+  color: #ffffff;
+  border-color: rgba(0,0,0,0.12);
+}
+
+html.light .message.ai {
+  color: #222222;
+}
+
+html.light .message.user span {
+  background: #eeeeee;
+  color: #111111;
+}
+
+html.light .label {
+  color: #777777;
+}
+
+html.light .welcome p {
+  color: #666666;
+}
+
+html.light .logo {
+  background: #111111;
+  color: #ffffff;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.08);
+}
+
+html.light #chat::-webkit-scrollbar-thumb {
+  background: #cccccc;
+}
+
 .header-button {
   width: 36px;
   height: 36px;
@@ -437,10 +500,21 @@ textarea::placeholder {
 }
 
 .table-wrap table {
-  width: max-content;
-  min-width: 720px;
+  width: 820px;
+  min-width: 820px;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 15px;
+}
+
+.table-wrap th:nth-child(1),
+.table-wrap td:nth-child(1) {
+  width: 190px;
+}
+
+.table-wrap th:nth-child(n+2),
+.table-wrap td:nth-child(n+2) {
+  width: 210px;
 }
 
 .table-wrap th,
@@ -1099,7 +1173,7 @@ header .brand {
 
 <button id="conversation-history-button" class="header-button" type="button" title="Riwayat percakapan">☰</button>
 <button id="new-conversation-header-button" class="header-button" type="button" title="Obrolan baru">＋</button>
-<button id="export-conversation" class="header-button" type="button" title="Export conversation">⇩</button>
+<button id="theme-toggle" class="header-button theme-toggle" type="button" title="Mode terang" aria-label="Mode terang"><span>☀️</span></button>
 </header>
 
 
@@ -2463,6 +2537,45 @@ document
   .getElementById("new-conversation-header-button")
   ?.addEventListener("click", startNewConversation);
 
+</script>
+
+
+<script>
+(function () {
+  const root = document.documentElement;
+  const button = document.getElementById("theme-toggle");
+
+  if (!button) return;
+
+  function applyTheme(theme) {
+    const light = theme === "light";
+
+    root.classList.toggle("light", light);
+
+    button.innerHTML = light ? "<span>🌙</span>" : "<span>☀️</span>";
+    button.title = light ? "Mode gelap" : "Mode terang";
+    button.setAttribute(
+      "aria-label",
+      light ? "Mode gelap" : "Mode terang"
+    );
+
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", light ? "#ffffff" : "#0b0b0f");
+  }
+
+  const savedTheme = localStorage.getItem("termux_ai_theme") || "dark";
+  applyTheme(savedTheme);
+
+  button.addEventListener("click", function () {
+    const nextTheme = root.classList.contains("light")
+      ? "dark"
+      : "light";
+
+    localStorage.setItem("termux_ai_theme", nextTheme);
+    applyTheme(nextTheme);
+  });
+})();
 </script>
 
 </body>
