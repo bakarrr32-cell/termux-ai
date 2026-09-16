@@ -432,8 +432,9 @@ async function handleChat(request, stream = false) {
 
   if (!provider || !providerResponse) {
     return json({
-      error: "API key tidak cocok dengan provider yang terdaftar."
-    }, 401);
+      error: "Semua provider/model gagal merespons.",
+      detail: result.error?.message || "Tidak ada respons dari provider."
+    }, 502);
   }
 
   if (!providerResponse.ok) {
