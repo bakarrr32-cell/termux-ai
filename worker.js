@@ -1,11 +1,11 @@
 const PROVIDERS = [
   {
-    name: "UniKey",
-    url: "https://www.getunikey.ai/v1/chat/completions"
+    name: "xKiro",
+    url: "https://api.xkiro.com/v1/chat/completions"
   }
 ];
 
-const MODEL = "google/gemini-3.5-flash";
+const MODEL = "deepseek/deepseek-v4-flash";
 
 async function requestProvider(
   apiKey,
