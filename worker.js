@@ -1,11 +1,11 @@
 const PROVIDERS = [
   {
-    name: "Heraxles",
-    url: "https://api.heraxles.dev/v1/chat/completions"
+    name: "UniKey",
+    url: "https://www.getunikey.ai/v1/chat/completions"
   }
 ];
 
-const MODEL = "gpt-6-astra";
+const MODEL = "google/gemini-3.5-flash";
 
 async function requestProvider(
   apiKey,
