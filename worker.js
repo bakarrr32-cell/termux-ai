@@ -1,15 +1,11 @@
 const PROVIDERS = [
   {
-    name: "UniKey",
-    url: "https://www.getunikey.ai/v1/chat/completions"
-  },
-  {
-    name: "Neokens",
-    url: "https://api.v2.neokens.com/v1/chat/completions"
+    name: "Heraxles",
+    url: "https://api.heraxles.dev/v1/chat/completions"
   }
 ];
 
-const MODEL = "google/gemini-3.5-flash";
+const MODEL = "gpt-6-astra";
 
 async function requestProvider(
   apiKey,
