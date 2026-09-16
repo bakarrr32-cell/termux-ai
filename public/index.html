@@ -1993,9 +1993,6 @@ function highlightCode(code, language) {
   const isHtml =
     lang === "html" ||
     lang === "xml";
-  const isCss =
-    lang === "css" ||
-    lang === "scss";
 
   const keywords = new Set();
 
@@ -2039,82 +2036,18 @@ function highlightCode(code, language) {
       );
   }
 
-  if (isHtml) {
-    let result = "";
-    let last = 0;
-    const tagRegex = /<\/?[A-Za-z][^>]*>/g;
-    let m;
-
-    while ((m = tagRegex.exec(code)) !== null) {
-      result += escapeHTML(code.slice(last, m.index));
-      result += '<span class="syntax-html-tag">' +
-        escapeHTML(m[0]) +
-        "</span>";
-      last = tagRegex.lastIndex;
-    }
-
-    return result + escapeHTML(code.slice(last));
-  }
-
-  if (isCss) {
-    const cssTokenRegex =
-      /\/\*[\s\S]*?\*\/|#[0-9a-fA-F]{3,8}\b|\b\d+(?:\.\d+)?(?:px|rem|em|vh|vw|vmin|vmax|%|deg|s|ms)\b|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
-
-    let result = "";
-    let last = 0;
-    let m;
-
-    while ((m = cssTokenRegex.exec(code)) !== null) {
-      result += escapeHTML(code.slice(last, m.index));
-
-      const token = m[0];
-
-      if (token.startsWith("/*")) {
-        result += '<span class="syntax-comment">' +
-          escapeHTML(token) +
-          "</span>";
-      } else if (
-        token.startsWith('"') ||
-        token.startsWith("'")
-      ) {
-        result += '<span class="syntax-string">' +
-          escapeHTML(token) +
-          "</span>";
-      } else {
-        result += '<span class="syntax-css-value">' +
-          escapeHTML(token) +
-          "</span>";
-      }
-
-      last = cssTokenRegex.lastIndex;
-    }
-
-    return result + escapeHTML(code.slice(last));
-  }
-
   const tokenRegex =
-    /(\/\/[^\n]*|#[^\n]*|<!--[\s\S]*?-->|\/(?:\\.|[^\/\\\n])+\/[gimsuy]*|@[A-Za-z_$][\w$-]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\`(?:\\.|[^\`\\])*\`|\b\d+(?:\.\d+)?\b|===|!==|==|!=|=>|<=|>=|&&|\|\||\+\+|--|\+=|-=|\*=|\/=|%=|\*\*|[+\-*\/%=<>!&|?:~^]+|\b[A-Za-z_$][\w$-]*\b)/g;
+    /(\/\/[^\n]*|#[^\n]*|<!--[\s\S]*?-->|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\`(?:\\.|[^\`\\])*\`|\b\d+(?:\.\d+)?\b|\b[A-Za-z_$][\w$-]*\b)/g;
 
   let result = "";
   let lastIndex = 0;
   let match;
-
-  const builtins =
-    /^(Math|JSON|Date|Object|Array|String|Number|Boolean|Promise|RegExp|Map|Set|Error|console)$/;
-
-  const constants =
-    /^(API_URL|API_KEY|BASE_URL|MODEL|MAX_RETRY|PORT|HOST)$/;
-
-  const primitiveTypes =
-    /^(string|number|boolean|void|unknown|never|any|object|undefined|null)$/;
 
   while ((match = tokenRegex.exec(code)) !== null) {
     result += escapeHTML(code.slice(lastIndex, match.index));
 
     const token = match[0];
     const escaped = escapeHTML(token);
-    const before = code.slice(0, match.index);
-    const after = code.slice(match.index + token.length);
 
     if (
       token.startsWith("//") ||
@@ -2122,86 +2055,47 @@ function highlightCode(code, language) {
       token.startsWith("<!--")
     ) {
       result += '<span class="syntax-comment">' + escaped + "</span>";
-
-    } else if (token.startsWith("@")) {
-      result += '<span class="syntax-decorator">' + escaped + "</span>";
-
-    } else if (/^\/(?:\\.|[^\/\\\n])+\/[gimsuy]*$/.test(token)) {
-      result += '<span class="syntax-regex">' + escaped + "</span>";
-
-    } else if (/^(===|!==|==|!=|=>|<=|>=|&&|\|\||\+\+|--|\+=|-=|\*=|\/=|%=|\*\*|[+\-*\/%=<>!&|?:~^]+)$/.test(token)) {
-      result += '<span class="syntax-operator">' + escaped + "</span>";
-
     } else if (
       token.startsWith('"') ||
       token.startsWith("'") ||
       token.startsWith("\`")
     ) {
       result += '<span class="syntax-string">' + escaped + "</span>";
-
     } else if (/^\d/.test(token)) {
       result += '<span class="syntax-number">' + escaped + "</span>";
-
     } else if (
       token === "true" ||
       token === "false" ||
       token === "null"
     ) {
       result += '<span class="syntax-boolean">' + escaped + "</span>";
-
-    } else if (/^(ERROR|INVALID|SyntaxError|syntax_error)$/.test(token)) {
-      result += '<span class="syntax-error">' + escaped + "</span>";
-
-    } else if (/^(WARN|WARNING|deprecated|DEPRECATED)$/.test(token)) {
-      result += '<span class="syntax-warning">' + escaped + "</span>";
-
     } else if (keywords.has(token)) {
       result += '<span class="syntax-keyword">' + escaped + "</span>";
-
-    } else if (builtins.test(token)) {
+    } else if (
+      /^(Math|JSON|Date|Object|Array|String|Number|Boolean|Promise|RegExp|Map|Set|Error|console)$/.test(token)
+    ) {
       result += '<span class="syntax-builtin">' + escaped + "</span>";
-
     } else if (
-      /^(interface|type|enum)\s+$/.test(before.slice(-15)) ||
-      primitiveTypes.test(token) ||
-      /:\s*$/.test(before.slice(-80))
-    ) {
-      result += '<span class="syntax-type">' + escaped + "</span>";
-
-    } else if (
-      /\bclass\s+$/.test(before.slice(-80)) ||
-      /\bnew\s+$/.test(before.slice(-80))
-    ) {
-      result += '<span class="syntax-class">' + escaped + "</span>";
-
-    } else if (
-      /\b(?:function|def)\s+[A-Za-z_$][\w$-]*\s*\([^)]*$/.test(before)
-    ) {
-      result += '<span class="syntax-parameter">' + escaped + "</span>";
-
-    } else if (
-      /^\s*\(/.test(after)
+      /^\s*\(/.test(code.slice(match.index + token.length))
     ) {
       result += '<span class="syntax-function">' + escaped + "</span>";
-
     } else if (
-      constants.test(token) ||
+      /^(API_URL|API_KEY|BASE_URL|MODEL|MAX_RETRY|PORT|HOST)$/.test(token) ||
       /^[A-Z][A-Z0-9_]{2,}$/.test(token)
     ) {
       result += '<span class="syntax-constant">' + escaped + "</span>";
-
     } else if (
-      /\b(const|let|var)\s+$/.test(before.slice(-80))
+      /\b(const|let|var)\s+$/.test(code.slice(0, match.index))
     ) {
       result += '<span class="syntax-variable">' + escaped + "</span>";
-
     } else if (
-      /^\s*\./.test(code.slice(Math.max(0, match.index - 1), match.index + token.length))
+      /^\s*\./.test(code.slice(match.index - 1, match.index + token.length))
     ) {
       result += '<span class="syntax-property">' + escaped + "</span>";
-
+    } else if (isHtml && /^[A-Za-z][\w-]*$/.test(token)) {
+      result += '<span class="syntax-function">' + escaped + "</span>";
     } else {
-      result += '<span class="syntax-identifier">' + escaped + "</span>";
+      result += escaped;
     }
 
     lastIndex = tokenRegex.lastIndex;
@@ -2211,6 +2105,37 @@ function highlightCode(code, language) {
 
   return result;
 }
+function renderTable(rows) {
+  if (!rows || rows.length < 2) return "";
+
+  const parseRow = line =>
+    line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(cell => cell.trim());
+
+  const headers = parseRow(rows[0]);
+  const separator = parseRow(rows[1]);
+  const isSeparator = separator.length === headers.length &&
+    separator.every(cell => /^:?-{3,}:?$/.test(cell));
+
+  if (!isSeparator) return "";
+
+  const body = rows.slice(2).map(parseRow);
+  let html = '<div class="table-wrap"><table><thead><tr>';
+  headers.forEach(cell => { html += '<th>' + renderInline(cell) + '</th>'; });
+  html += '</tr></thead><tbody>';
+
+  body.forEach(cells => {
+    if (!cells.some(Boolean)) return;
+    html += '<tr>';
+    headers.forEach((_, index) => {
+      html += '<td>' + renderInline(cells[index] || '') + '</td>';
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  return html;
+}
+
 function renderMarkdown(text) {
   const lines = String(text).split("\n");
 
