@@ -1,0 +1,6 @@
+{
+  "name": "xkiro",
+  "baseURL": "https://api.xkiro.com/v1",
+  "model": "minimax/minimax-m3:free",
+  "apiKeyEnv": "XKIRO_API_KEY"
+}
