@@ -1859,7 +1859,41 @@ function renderConversationList() {
 
     item.appendChild(title);
 
-    item.onclick = function() {
+    let longPressTimer = null;
+    let longPressTriggered = false;
+
+    function cancelLongPress() {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    }
+
+    function startLongPress() {
+      cancelLongPress();
+      longPressTriggered = false;
+
+      longPressTimer = setTimeout(() => {
+        longPressTimer = null;
+        longPressTriggered = true;
+
+        deleteConversation(id);
+      }, 650);
+    }
+
+    item.addEventListener("pointerdown", startLongPress);
+    item.addEventListener("pointerup", cancelLongPress);
+    item.addEventListener("pointerleave", cancelLongPress);
+    item.addEventListener("pointercancel", cancelLongPress);
+    item.addEventListener("pointermove", cancelLongPress);
+
+    item.onclick = function(event) {
+      if (longPressTriggered) {
+        event.preventDefault();
+        longPressTriggered = false;
+        return;
+      }
+
       activeConversationId = id;
       saveAllConversations();
       location.reload();
@@ -1867,6 +1901,38 @@ function renderConversationList() {
 
     list.appendChild(item);
   }
+}
+
+
+function deleteConversation(id) {
+  if (!id || !conversations[id]) return;
+
+  delete conversations[id];
+
+  if (activeConversationId === id) {
+    const remainingIds = Object.keys(conversations);
+
+    if (remainingIds.length) {
+      remainingIds.sort(
+        (a, b) =>
+          (conversations[b].updatedAt || 0) -
+          (conversations[a].updatedAt || 0)
+      );
+
+      activeConversationId = remainingIds[0];
+
+      conversationHistory = Array.isArray(
+        conversations[activeConversationId]?.messages
+      )
+        ? conversations[activeConversationId].messages.slice(-30)
+        : [];
+    } else {
+      createNewConversation();
+    }
+  }
+
+  saveAllConversations();
+  renderConversationList();
 }
 
 function openConversationHistory() {
