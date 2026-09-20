@@ -1,11 +1,11 @@
 const PROVIDERS = [
   {
-    name: "xKiro",
-    url: "https://api.xkiro.com/v1/chat/completions"
+    name: "VSCodeAPI",
+    url: "https://vscodeapi.com/v1/chat/completions"
   }
 ];
 
-const MODEL = "minimax/minimax-m3:free";
+const MODEL = "gpt-5.6-sol";
 
 async function requestProvider(
   apiKey,
