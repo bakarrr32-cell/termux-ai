@@ -1713,7 +1713,116 @@ html.light .code-block .syntax-css-value { color: #16a34a; }
 
 
 
-</head>
+<style>
+/* RESPONSE UI V3 */
+
+.message.ai .markdown ol.tutorial-steps {
+  list-style: none;
+  margin: 12px 0 18px;
+  padding: 0;
+  counter-reset: tutorial-step;
+}
+
+.message.ai .markdown ol.tutorial-steps > li {
+  position: relative;
+  min-height: 38px;
+  margin: 8px 0;
+  padding: 8px 12px 8px 52px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.025);
+  counter-increment: tutorial-step;
+}
+
+.message.ai .markdown ol.tutorial-steps > li::before {
+  content: counter(tutorial-step);
+  position: absolute;
+  left: 7px;
+  top: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.message.ai .markdown ol.tutorial-steps > li:nth-child(1)::before {
+  background: #1683ea;
+}
+
+.message.ai .markdown ol.tutorial-steps > li:nth-child(2)::before {
+  background: #8b5de8;
+}
+
+.message.ai .markdown ol.tutorial-steps > li:nth-child(3)::before {
+  background: #ed5cae;
+}
+
+.message.ai .markdown ol.tutorial-steps > li:nth-child(4)::before {
+  background: #12c99a;
+}
+
+.message.ai .markdown ol.tutorial-steps > li:nth-child(5)::before {
+  background: #f59e0b;
+}
+
+.message.ai .tutorial-tip {
+  margin: 16px 0;
+  padding: 13px 15px;
+  border-radius: 14px;
+  background: rgba(16,185,129,.08);
+  border: 1px solid rgba(16,185,129,.15);
+}
+
+.message.ai .tutorial-tip-title {
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+.message.ai .tutorial-tip p {
+  margin: 0;
+}
+
+.message.ai .tutorial-options {
+  margin-top: 16px;
+}
+
+.message.ai .tutorial-option-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.message.ai .tutorial-option {
+  display: inline-flex;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+}
+
+html:not(.light) .message.ai .tutorial-option {
+  background: #18181b;
+  border-color: rgba(255,255,255,.09);
+  color: #e4e4e7;
+}
+
+html:not(.light) .message.ai .tutorial-tip {
+  background: rgba(16,185,129,.08);
+}
+
+@media (max-width: 700px) {
+  .message.ai .markdown ol.tutorial-steps > li {
+    padding-left: 49px;
+  }
+}
+</style>\n</head>
 
 <body class="termux-logged-out">
 
@@ -2593,12 +2702,51 @@ function renderMarkdown(text) {
       }
     }
 
+    if (/^💡\s*Tip:?$/i.test(line.trim())) {
+      closeList();
+
+      html += '<div class="tutorial-tip">';
+      html += '<div class="tutorial-tip-title">💡 Tip</div>';
+
+      if (i + 1 < lines.length && lines[i + 1].trim() !== "") {
+        html += "<p>" + renderInline(lines[++i]) + "</p>";
+      }
+
+      html += "</div>";
+      continue;
+    }
+
+    if (/^🚀\s*(?:Opsi lanjutan|Selanjutnya):?$/i.test(line.trim())) {
+      closeList();
+
+      html += '<div class="tutorial-options">';
+      html += '<strong>🚀 Opsi lanjutan</strong>';
+      html += '<div class="tutorial-option-list">';
+
+      let j = i + 1;
+
+      while (j < lines.length && lines[j].trim() !== "") {
+        const option = lines[j].replace(/^[-*]\s+/, "").trim();
+
+        if (option) {
+          html += '<span class="tutorial-option">' +
+            renderInline(option) +
+            "</span>";
+        }
+
+        j++;
+      }
+
+      html += "</div></div>";
+      i = j - 1;
+      continue;
+    }
+
     if (line.startsWith("### ")) {
       closeList();
       html += "<h3>" + renderInline(line.slice(4)) + "</h3>";
       continue;
     }
-
     if (line.startsWith("## ")) {
       closeList();
       html += "<h2>" + renderInline(line.slice(3)) + "</h2>";
@@ -2622,23 +2770,20 @@ function renderMarkdown(text) {
       continue;
     }
 
-    if (/^\d+\. /.test(line)) {
+    if (/^(?:\d+\. |[①②③④⑤⑥⑦⑧⑨⑩]\s+)/.test(line)) {
       if (list !== "ol") {
         closeList();
-        html += "<ol>";
+        html += '<ol class="tutorial-steps">';
         list = "ol";
       }
 
-      html +=
-        "<li>" +
-        renderInline(line.replace(/^\d+\. /, "")) +
-        "</li>";
+      const stepText = line
+        .replace(/^\d+\. /, "")
+        .replace(/^[①②③④⑤⑥⑦⑧⑨⑩]\s+/, "");
 
+      html += "<li>" + renderInline(stepText) + "</li>";
       continue;
     }
-
-    closeList();
-
     if (line.trim() !== "") {
       html += "<p>" + renderInline(line) + "</p>";
     }
