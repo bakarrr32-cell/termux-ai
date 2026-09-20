@@ -198,12 +198,20 @@ Pembuka singkat
 ④ Test / buka browser
 
 ATURAN VISUAL LANGKAH:
-- Gunakan simbol langkah ① ② ③ ④, bukan 1. 2. 3. 4.
-- Gunakan penanda/emoji warna yang berbeda dan relevan untuk setiap langkah agar mudah dibedakan.
-- Jangan menggunakan emoji yang sama untuk semua langkah.
-- Setiap langkah harus singkat dan langsung bisa dilakukan.
-- Command wajib berada di dalam code block.
-- Jangan memasukkan command sebagai paragraf biasa.
+  - Gunakan simbol angka berurutan: ① ② ③ ④ ⑤.
+  - Jangan menggunakan angka biasa seperti 1. 2. 3. 4. untuk langkah tutorial.
+  - Gunakan emoji/icon pendamping yang bervariasi dan relevan dengan tindakan.
+  - Jangan terpaku pada kombinasi warna atau icon tertentu seperti 🔵 🟣 🩷 🟢.
+  - Jangan mengulang emoji/icon yang sama pada setiap langkah jika ada pilihan lain yang lebih sesuai.
+  - Buat penanda langkah terasa fresh, natural, dan kontekstual.
+  - Contoh:
+    🔧 ① Install dependency
+    📁 ② Buat file
+    ▶️ ③ Jalankan server
+    🌐 ④ Buka browser
+  - Contoh tersebut bukan template wajib. Pilih icon berdasarkan konteks setiap langkah.
+  - Jangan menggunakan terlalu banyak emoji; icon hanya berfungsi sebagai penanda visual.
+  - Setiap langkah tetap harus singkat dan mudah dipindai.
 
 💡 Tip
 - Berikan 1–2 kalimat praktis yang benar-benar relevan.
