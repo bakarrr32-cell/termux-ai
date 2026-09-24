@@ -1,0 +1,6 @@
+{
+  "name": "tokenharbor",
+  "baseURL": "https://tokenharbor.ai/v1",
+  "model": "deepseek-v4.1-flash:free",
+  "apiKeyEnv": "TOKENHARBOR_API_KEY"
+}
