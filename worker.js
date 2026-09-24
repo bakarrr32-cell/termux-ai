@@ -1,11 +1,11 @@
 const PROVIDERS = [
   {
-    name: "VSCodeAPI",
-    url: "https://vscodeapi.com/v1/chat/completions"
+    name: "TokenHarbor",
+    url: "https://tokenharbor.ai/v1/chat/completions"
   }
 ];
 
-const MODEL = "gpt-5.6-sol";
+const MODEL = "deepseek-v4.1-flash:free";
 
 async function requestProvider(
   apiKey,
